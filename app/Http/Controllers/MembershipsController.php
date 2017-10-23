@@ -17,6 +17,8 @@ class MembershipsController extends Controller
      */
     public function store(Team $team)
     {
+        abort_unless(auth()->id() == $team->owner_id, 401);
+
         try {
             // try to add the user to the team
             $team->members()->attach(request(['user_id']));

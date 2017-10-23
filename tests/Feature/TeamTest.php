@@ -33,6 +33,19 @@ class TeamTest extends TestCase
     }
 
     /** @test */
+    function regular_users_cant_add_members_to_any_team()
+    {
+        $this->signIn();
+
+        $randomTeam = factory(Team::class)->create(['owner_id' => 999]);
+
+        $userToAdd = factory(User::class)->create(['name' => 'john']);
+
+        $this->post("/memberships/{$randomTeam->id}", ['user_id' => $userToAdd->id])
+            ->assertStatus(401);
+    }
+
+    /** @test */
     function team_owners_can_add_other_members_to_the_team()
     {
         $this->signIn();
@@ -57,10 +70,8 @@ class TeamTest extends TestCase
 
         $userToAdd = factory(User::class)->create(['name' => 'john']);
 
-        // add the user
         $this->post("/memberships/{$team->id}", ['user_id' => $userToAdd->id]);
 
-        // try to add the user again, should fail
         $this->post("/memberships/{$team->id}", ['user_id' => $userToAdd->id])
             ->assertRedirect($team->path())
             ->assertSessionHas('error');
