@@ -12,11 +12,13 @@
 */
 
 
+Route::view('/', 'welcome');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/teams/{team}', 'TeamController@show');
+Route::get('/teams/{team}', 'TeamController@show')->middleware('auth');
 Route::post('/teams', 'TeamController@store')->middleware('auth');
 
 Route::post('/memberships/{team}', 'MembershipsController@store')->middleware('auth');

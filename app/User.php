@@ -26,4 +26,39 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Determine if the current user is the owner of the given team.
+     *
+     * @param Team $team
+     * @return boolean
+     */
+    public function owns(Team $team)
+    {
+        return $this->ownedTeams
+            ->pluck('id')
+            ->contains($team->id);
+    }
+
+    /**
+     * Return all the teams the current user owns.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function ownedTeams()
+    {
+        return $this->teams()
+            ->where('is_owner', true);
+    }
+
+    /**
+     * A user may be in many teams.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    public function teams()
+    {
+        return $this
+            ->belongsToMany(Team::class, 'memberships');
+    }
 }

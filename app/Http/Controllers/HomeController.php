@@ -23,6 +23,8 @@ class HomeController extends Controller
      */
     public function index()
     {
+        auth()->user()->load('teams');
+
         return view('home');
     }
 }

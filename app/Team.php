@@ -9,7 +9,7 @@ class Team extends Model
      *
      * @var array
      */
-    protected $with = ['owner'];
+    protected $with = ['owners'];
 
     /**
      * Named constructor.
@@ -19,7 +19,7 @@ class Team extends Model
      */
     public static function named($name)
     {
-        return new static(compact('name'));
+        return static::create(compact('name'));
     }
 
     /**
@@ -30,17 +30,24 @@ class Team extends Model
      */
     public function foundedBy(User $user)
     {
-        return tap($this->fill(['owner_id' => $user->id]))->save();
+        Membership::create([
+            'user_id' => $user->id,
+            'team_id' => $this->id,
+            'is_owner' => true
+        ]);
+
+        return $this;
     }
 
     /**
-     * Return the owner of the team.
+     * Return the owners of the team.
      *
      * @return \App\User
      */
-    public function owner()
+    public function owners()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsToMany(User::class, 'memberships')
+            ->where('is_owner', true);
     }
 
     /**
@@ -53,6 +60,13 @@ class Team extends Model
         return $this->belongsToMany(User::class, 'memberships');
     }
 
+    public function addMember($user)
+    {
+        $user = $user instanceof User ? $user->id : $user;
+
+        return $this->members()->attach($user);
+    }
+
     /**
      * Check if the team contains the given user.
      *
@@ -61,9 +75,10 @@ class Team extends Model
      */
     public function contains(User $user)
     {
-        return $this->owner->id == $user->id || $this->members->contains(function ($member) use ($user) {
-            return $member->id == $user->id;
-        });
+        return $this->owners
+            ->merge($this->members)
+            ->pluck('id')
+            ->contains($user->id);
     }
 
     /**
