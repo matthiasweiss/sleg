@@ -9,7 +9,7 @@ class Team extends Model
      *
      * @var array
      */
-    protected $with = ['owners'];
+    protected $with = ['owners', 'members'];
 
     /**
      * Named constructor.

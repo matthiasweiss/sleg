@@ -14,6 +14,8 @@
 
 Route::view('/', 'welcome');
 
+Route::get('/users/{name}', 'UserSearchController@index')->middleware('auth');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');

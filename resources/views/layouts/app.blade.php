@@ -10,6 +10,10 @@
 
     <title>{{ config('app.name', 'Sleg') }}</title>
 
+    <style>
+        .mb-1 { margin-bottom: 1em; }
+    </style>
+
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
