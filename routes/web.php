@@ -24,3 +24,4 @@ Route::get('/teams/{team}', 'TeamController@show')->middleware('auth');
 Route::post('/teams', 'TeamController@store')->middleware('auth');
 
 Route::post('/memberships/{team}', 'MembershipsController@store')->middleware('auth');
+Route::delete('/memberships/{team}', 'MembershipsController@destroy')->middleware('auth');

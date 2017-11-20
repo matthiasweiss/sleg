@@ -68,17 +68,36 @@ class Team extends Model
     }
 
     /**
+     * Remove the given user from this team.
+     *
+     * @param int $userId
+     * @return Team
+     */
+    public function remove($userId)
+    {
+        if ($this->contains($userId)) {
+            Membership::where([
+                'user_id' => $userId,
+                'team_id' => $this->id
+            ])->delete();
+        }
+
+        return $this;
+    }
+
+    /**
      * Check if the team contains the given user.
      *
      * @param User $user
      * @return boolean
      */
-    public function contains(User $user)
+    public function contains($user)
     {
+        $user = $user instanceof User ? $user->id : $user;
         return $this->owners
             ->merge($this->members)
             ->pluck('id')
-            ->contains($user->id);
+            ->contains($user);
     }
 
     /**

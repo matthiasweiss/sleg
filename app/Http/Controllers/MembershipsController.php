@@ -30,4 +30,12 @@ class MembershipsController extends Controller
 
         return redirect($team->path());
     }
+
+    public function destroy(Team $team)
+    {
+        abort_unless($userId = request('user_id'), 422);
+        abort_unless(auth()->user()->owns($team), 401);
+
+        $team->remove($userId);
+    }
 }
