@@ -7,6 +7,7 @@ use App\Membership;
 use Illuminate\Http\Request;
 use App\Exceptions\UserAlreadyInTeam;
 use Illuminate\Database\QueryException;
+use Illuminate\Support\Facades\Gate;
 
 class MembershipsController extends Controller
 {
@@ -33,9 +34,12 @@ class MembershipsController extends Controller
 
     public function destroy(Team $team)
     {
-        abort_unless($userId = request('user_id'), 422);
+        $attributes = request()->validate([
+            'user_id' => 'required'
+        ]);
+
         abort_unless(auth()->user()->owns($team), 401);
 
-        $team->remove($userId);
+        $team->remove($attributes['user_id']);
     }
 }

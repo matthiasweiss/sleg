@@ -14,6 +14,7 @@ class RemoveUsersFromTeamTest extends TestCase
     /** @test */
     public function the_team_owner_can_remove_members()
     {
+        $this->withoutExceptionHandling();
         $this->signIn();
 
         $team = Team::named('foo')->foundedBy(auth()->user());
